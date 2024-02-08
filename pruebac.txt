@@ -1,0 +1,37 @@
+	i = 0;
+	p = 1;
+L0:
+	if (i < 3) goto L1;
+	goto L2;
+L3:
+	$t0 = i + 1;
+	i = $t0;
+	goto L0;
+L1:
+	q = 1;
+L4:
+	if ( 1 == q) goto L5;
+	goto L6;
+L7:
+	q = 0;
+	goto L4;
+L5:
+L8:
+	r = 1;
+	goto L10;
+L9:
+	r = 0;
+L10:
+	print i;
+	goto L7;
+L6:
+	goto L3;
+L2:
+	if ( 1 == r) goto L11;
+	goto L12;
+L11:
+	print 4;
+	goto L13;
+L12:
+	print 5;
+L13:

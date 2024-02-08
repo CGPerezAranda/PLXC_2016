@@ -1,0 +1,22 @@
+	x = 1;
+L0:
+	if (10 < x) goto L1;
+	$t0 = x * x;
+	if (0 < $t0) goto L2;
+	goto L3;
+L2:
+	$t1 = x * x;
+	if (25 < $t1) goto L5;
+	goto L4;
+L3:
+	goto L5;
+L4:
+	x = x + 1;
+	goto L0;
+L1:
+	print 2;
+	goto L6;
+L5:
+L6:
+	print x;
+	print 0;
