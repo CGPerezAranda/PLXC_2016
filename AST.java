@@ -87,6 +87,7 @@ public class AST {
 					PLXC.out.println(et1 + ":");//no se cumple la condicion
 					PLXC.out.println("\twritec 102;\n\twritec 97;\n\twritec 108;\n\twritec 115;\n\twritec 101;\n\twritec 10;");
 					PLXC.out.println(et2 + ":");//salida
+				
 				}else{
 					aux = "print";
 					if (TablaSimbolos.tipo(left) == TablaSimbolos.Tipo.ARRAY_CHAR || izq.raiz.equals("castChar")){
@@ -98,6 +99,9 @@ public class AST {
 							PLXC.out.println("\t" + "$" + temp + " = " + left + "[" + i + "];");
 							PLXC.out.println("\t"+ aux + " $" + temp + ";");
 						}
+					if(TablaSimbolos.esMatriz(left)){
+
+					}
 					}else{
 						if(!TablaSimbolos.estaIdent(left)){
 							Errores.noDeclarada(left);
@@ -138,6 +142,49 @@ public class AST {
 					der.gc(); //siguiente valor
 				}
 				res = temp;
+				break;
+			case "matDecl":
+				left = der.izq.raiz; //dimensión 1
+				right = der.der.raiz;//dimensión 2
+				aux = izq.raiz;		 //identificador
+				TablaSimbolos.insertar(aux, TablaSimbolos.Tipo.ARRAY_INT_2D);	
+				TablaSimbolos.declararDimensions(aux, Integer.parseInt(left), Integer.parseInt(right));
+				int dim = Integer.parseInt(left) * Integer.parseInt(right);
+				PLXC.out.println("\t$" + aux + "_length = " + dim + ";");
+				res = aux;
+				break;
+			case "matPos":
+				aux = izq.raiz; //identificador
+				left = der.izq.raiz; //indice 1
+				right = der.der.raiz; //indice 2
+				temp = Generador.nuevaVariable();
+				et = Generador.nuevaEtiqueta();
+				String dim1, dim2;
+				dim1 = TablaSimbolos.getDimensionsMat(aux).getDim1().toString();
+				dim2 = TablaSimbolos.getDimensionsMat(aux).getDim2().toString();
+				PLXC.out.println("\tif(" + left + " < 0 ) goto " + et + ";");				
+				PLXC.out.println("\tif(" + dim1 + " < " + left + " ) goto " + et + ";");
+				PLXC.out.println("\tif(" + dim1 + " == " + left + " ) goto " + et + ";");
+				et1 = Generador.nuevaEtiqueta();
+				PLXC.out.println("\tgoto " + et1 + ";");
+				PLXC.out.println(et + ":");
+				PLXC.out.println("\terror;\n\thalt;");
+				PLXC.out.println(et1 + ":");
+				et = Generador.nuevaEtiqueta();
+				PLXC.out.println("\t$" + temp + " = " + dim2 + " * " + left + ";");
+				PLXC.out.println("\t$" + temp + " = " + temp + " + " + right + ";");
+				PLXC.out.println("\tif(" + right + " < 0 ) goto " + et + ";");				
+				PLXC.out.println("\tif(" + dim2 + " < " + right + " ) goto " + et + ";");
+				PLXC.out.println("\tif(" + dim2 + " == " + right + " ) goto " + et + ";");
+				et1 = Generador.nuevaEtiqueta();
+				PLXC.out.println("\tgoto " + et1 + ";");
+				PLXC.out.println(et + ":");
+				PLXC.out.println("\terror;\n\thalt;");
+				PLXC.out.println(et1 + ":");
+				temp2 = Generador.nuevaVariable();
+				PLXC.out.println("\t$" + temp2 + " = " + aux + "[" + temp + "];");
+				TablaSimbolos.insertar(temp2, TablaSimbolos.Tipo.ARRAY_INT_2D);
+				res = temp2;
 				break;
 			case "cadena":
 				right = der.raiz;
@@ -308,7 +355,31 @@ public class AST {
 					PLXC.out.println("\t$" + temp + " = " + left + " + " + right + ";" );
 				}
 				TablaSimbolos.insertar("$" + temp, tipo);
-				res += "$" + temp;				
+				res += "$" + temp;			
+				break;
+			case "masIgual":	
+				left = izq.raiz; //identificador
+				right = der.gc(); //valor
+				PLXC.out.println("\t" + left + " = " + left + " + " + right + ";");
+				res = left;
+				break;
+			case "menosIgual":
+			 	left = izq.raiz;; //identificador
+				right = der.gc(); //valor
+				PLXC.out.println("\t" + left + " = " + left + " - " + right + ";");
+				res = left;
+				break;	
+			case "porIgual":
+				left = izq.raiz; //identificador
+				right = der.gc(); //valor
+				PLXC.out.println("\t" + left + " = " + left + " * " + right + ";");
+				res = left;
+				break;
+			case "divIgual":
+				left = izq.raiz; //identificador
+				right = der.gc(); //valor
+				PLXC.out.println("\t" + left + " = " + left + " / " + right + ";");
+				res = left;
 				break;
 			case "menos":
 				left = izq.gc();

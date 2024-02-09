@@ -1,22 +1,40 @@
-	x = 1;
+   $a_length = 3;
+   $b_length = 3;
+   $t0[0] = 1;
+   $t0[1] = 2;
+   $t0[2] = 3;
+   $t1 = $t0[0];
+   a[0] = $t1;
+   $t1 = $t0[1];
+   a[1] = $t1;
+   $t1 = $t0[2];
+   a[2] = $t1;
+   $t2 = a[0];
+   b[0] = $t2;
+   $t2 = a[1];
+   b[1] = $t2;
+   $t2 = a[2];
+   b[2] = $t2;
+   i = 0;
 L0:
-	if (10 < x) goto L1;
-	$t0 = x * x;
-	if (0 < $t0) goto L2;
-	goto L3;
-L2:
-	$t1 = x * x;
-	if (25 < $t1) goto L5;
-	goto L4;
+   if (i < 3) goto L1;
+   goto L2;
 L3:
-	goto L5;
-L4:
-	x = x + 1;
-	goto L0;
+   $t3 = i + 1;
+   i = $t3;
+   goto L0;
 L1:
-	print 2;
-	goto L6;
+   if (i < 0) goto L4;
+   if (3 < i) goto L4;
+   if (3 == i) goto L4;
+   goto L5;
+L4:
+   error;
+   halt;
 L5:
-L6:
-	print x;
-	print 0;
+   $t4 = b[i];
+   $t5 = suma + $t4;
+   suma = $t5;
+   goto L3;
+L2:
+   print suma;

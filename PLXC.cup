@@ -24,19 +24,19 @@ terminal MENOSUNARIO;
 
 /* NOT TERMINALES */
 non terminal ini;
-non terminal AST listaSent, forAllExp, sent, exp, boolexp, cond, elseSent, expFor, listaEnteros, listaChar, listaReales, listaBool, arrayIni, pArrayIni, expString;
+non terminal AST listaSent, matExp, forAllExp, sent, exp, boolexp, cond, elseSent, expFor, listaEnteros, listaChar, listaReales, listaBool, arrayIni, pArrayIni, expString;
 
 /* PRECEDENCIAS */
 
 precedence right IMPLICA;
-precedence right ASIG, MASIGUAL, MENOSIGUAL, PORIGUAL, DIVIGUAL;
+precedence left ASIG, MASIGUAL, MENOSIGUAL, PORIGUAL, DIVIGUAL;
 precedence left COMA;
 precedence nonassoc FORALL;
 precedence right FROM, TO, STEP;
 precedence left OR, AND;
 precedence right NOT; // Ensure NOT has higher precedence than AND
 precedence left IGUAL, MAYOR, MENOR, MAYORIGUAL, MENORIGUAL, DIF;
-precedence left MAS, MENOS, MASIGUAL;
+precedence left MAS, MENOS;
 precedence left POR, DIV;
 precedence left AP, CP, AC, CC;
 precedence nonassoc MENOSUNARIO; // You might want to ensure this is correctly positioned in precedence if used for unary minus
@@ -121,10 +121,10 @@ exp			::=	NUM:n									{: RESULT = new AST("num", new AST(n, null, null), null 
 			|   CASTINT exp:e 							{: RESULT = new AST("castInt", e, null); :}
 			|   CASTFLOAT exp:e 						{: RESULT = new AST("castFloat", e, null); :}
 			|	exp:e1 MAS exp:e2						{: RESULT = new AST("mas", e1, e2); :}
-			|   exp:e1 MASIGUAL exp:e2					{: RESULT = new AST("masIgual", e1, e2); :}
-			|   exp:e1 MENOSIGUAL exp:e2				{: RESULT = new AST("menosIgual", e1, e2); :}	
-			|   exp:e1 PORIGUAL exp:e2					{: RESULT = new AST("porIgual", e1, e2); :}
-			|   exp:e1 DIVIGUAL exp:e2					{: RESULT = new AST("divIgual", e1, e2); :}
+			|   IDENT:i MASIGUAL exp:e2					{: RESULT = new AST("masIgual", new AST(i, null, null), e2); :}
+			|   IDENT:i MENOSIGUAL exp:e2				{: RESULT = new AST("menosIgual", new AST(i, null, null), e2); :}	
+			|   IDENT:i PORIGUAL exp:e2					{: RESULT = new AST("porIgual", new AST(i, null, null), e2); :}
+			|   IDENT:i DIVIGUAL exp:e2					{: RESULT = new AST("divIgual", new AST(i, null, null), e2); :}
 			|	exp:e1 MENOS exp:e2						{: RESULT = new AST("menos", e1, e2); :}
 			|	exp:e1 POR exp:e2						{: RESULT = new AST("por", e1, e2); :}
 			|	exp:e1 DIV exp:e2						{: RESULT = new AST("div", e1, e2); :}
@@ -134,7 +134,9 @@ exp			::=	NUM:n									{: RESULT = new AST("num", new AST(n, null, null), null 
 			|	IDENT:i ASIG cond:c						{: RESULT = new AST("asigBool", new AST(i, null, null), c); :}
 			|   IDENT:i ASIG NOT exp:e					{: RESULT = new AST("asigBool", new AST(i, null, null), new AST("not", e, null)); :}	
 			|	IDENT:i AC exp:e CC						{: RESULT = new AST("arrayPos", new AST(i, null, null), e); :}
+			|   IDENT:i AC NUM:n CC						{: RESULT = new AST("arrayPos", new AST(i, null, null), new AST(n, null, null)); :}
 			|   IDENT:i AC NUM:n CC ASIG exp:e			{: RESULT = new AST("arrayAsig", new AST(i, new AST(n, null, null), null), e); :}
+			|   IDENT:i AC NUM:n1 CC AC NUM:n2 CC       {: RESULT = new AST("matPos", new AST(i, null, null), new AST ("posicion", new AST (n1, null, null), new AST (n2,null ,null))); :}
 			|	IDENT:i AC exp:e1 CC ASIG exp:e2		{: RESULT = new AST("arrayAsig", new AST(i, e1, null), e2); :}
 			|	IDENT:i ASIG ALL arrayIni:a CLL			{: RESULT = new AST("iniArray", new AST(i, null, null), a); :}
 			|	IDENT:i									{: RESULT = new AST("ident", new AST(i, null, null), null); :}
@@ -161,6 +163,7 @@ listaEnteros::=	IDENT:i                             	{: RESULT = new AST("intIde
 			|  IDENT:i ASIG exp:e 						{: RESULT = new AST("asigInt", null, new AST(i,e,null)); :}
 			|  IDENT:i ASIG exp:e COMA listaEnteros:l	{: RESULT = new AST("asigInt", l, new AST(i,e,null)); :}
 			|  IDENT:i AC NUM:n CC						{: RESULT = new AST("arrayInt", new AST(i, null, null), new AST(n,null,null)); :}
+			|  IDENT:i AC NUM:n1 CC AC NUM:n2 CC       {: RESULT = new AST("matDecl", new AST(i, null, null), new AST ("dimensiones", new AST (n1, null, null), new AST (n2,null ,null))); :}
 			;
 
 listaChar	::=	IDENT:i                             	{: RESULT = new AST("charIdent", null, new AST(i, null, null)); :}	

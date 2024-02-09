@@ -18,6 +18,10 @@ import java_cup.runtime.*;
     "*"                 { return new Symbol(sym.POR); }
     "/"		            { return new Symbol(sym.DIV); }
     "=="                { return new Symbol(sym.IGUAL); }
+    "+="                { return new Symbol(sym.MASIGUAL); }
+    "-="                { return new Symbol(sym.MENOSIGUAL); }
+    "*="                { return new Symbol(sym.PORIGUAL); }
+    "/="                { return new Symbol(sym.DIVIGUAL); }
     "="                 { return new Symbol(sym.ASIG); }
     "("                 { return new Symbol(sym.AP); }
     ")"                 { return new Symbol(sym.CP); }
@@ -56,10 +60,7 @@ import java_cup.runtime.*;
     "from"              { return new Symbol(sym.FROM); }
     "to"                { return new Symbol(sym.TO); }
     "step"              { return new Symbol(sym.STEP); }
-    "+="                { return new Symbol(sym.MASIGUAL); }
-    "-="                { return new Symbol(sym.MENOSIGUAL); }
-    "*="                { return new Symbol(sym.PORIGUAL); }
-    "/="                { return new Symbol(sym.DIVIGUAL); }
+
     "/*" [^*] ~"*/" | "/*" "*"+ "/" {}
     "//" [^\n]*         {}
  
